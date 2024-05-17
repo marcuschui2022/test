@@ -6,21 +6,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/marcuschui2022/test' 
+                git branch: 'main', url: 'https://github.com/marcuschui2022/test'
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
-                    def app = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
+                    sh "docker build -t ${env.DOCKER_IMAGE}:${env.BUILD_ID} ."
                 }
             }
         }
         stage('Run Docker Container') {
             steps {
                 script {
-                    def app = docker.image("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
-                    app.run('-d -p 8080:5000')
+                    sh "docker run -d -p 8080:5000 ${env.DOCKER_IMAGE}:${env.BUILD_ID}"
                 }
             }
         }
